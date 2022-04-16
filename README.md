@@ -2,6 +2,65 @@
 
 We use the pi calculation problem 
 
+## The environment
+
+The machine is a single host in a HPC cluster with the following specs
+
+```
+Architecture:          x86_64
+CPU op-mode(s):        32-bit, 64-bit
+Byte Order:            Little Endian
+CPU(s):                20
+On-line CPU(s) list:   0-19
+Thread(s) per core:    1
+Core(s) per socket:    10
+Socket(s):             2
+NUMA node(s):          2
+Vendor ID:             GenuineIntel
+CPU family:            6
+Model:                 63
+Model name:            Intel(R) Xeon(R) CPU E5-2660 v3 @ 2.60GHz
+Stepping:              2
+CPU MHz:               2599.682
+CPU max MHz:           2600.0000
+CPU min MHz:           1200.0000
+BogoMIPS:              5188.23
+Virtualization:        VT-x
+L1d cache:             32K
+L1i cache:             32K
+L2 cache:              256K
+L3 cache:              25600K
+NUMA node0 CPU(s):     0-9
+NUMA node1 CPU(s):     10-19
+Flags:                 fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush dts acpi mmx fxsr sse sse2 ss ht tm pbe syscall nx pdpe1gb rdtscp lm constant_tsc arch_perfmon pebs bts rep_good nopl xtopology nonstop_tsc aperfmperf eagerfpu pni pclmulqdq dtes64 ds_cpl vmx smx est tm2 ssse3 sdbg fma cx16 xtpr pdcm pcid dca sse4_1 sse4_2 x2apic movbe popcnt tsc_deadline_timer aes xsave avx f16c rdrand lahf_lm abm epb invpcid_single intel_ppin ssbd ibrs ibpb stibp tpr_shadow vnmi flexpriority ept vpid fsgsbase tsc_adjust bmi1 avx2 smep bmi2 erms invpcid cqm xsaveopt cqm_llc cqm_occup_llc dtherm arat pln pts md_clear spec_ctrl intel_stibp flush_l1d
+```
+
+The Go version was compiled on an AMD Ryzen laptop with the following command:
+
+```
+go build main.go
+```
+
+The Rust version was compiled on the cluster because I got the following error when trying to run the version compiled on the laptop:
+
+```
+./main: /lib64/libc.so.6: version `GLIBC_2.28' not found (required by ./main)
+./main: /lib64/libc.so.6: version `GLIBC_2.18' not found (required by ./main)
+./main: /lib64/libc.so.6: version `GLIBC_2.33' not found (required by ./main)
+./main: /lib64/libc.so.6: version `GLIBC_2.32' not found (required by ./main)
+./main: /lib64/libc.so.6: version `GLIBC_2.34' not found (required by ./main)
+```
+
+the following command was used to compile:
+
+```
+cargo build -r 
+```
+
+the r flag has to be used to get the higest optimization. If not used the performance will be around 10 times slower (on my setup)
+
+I guess compiling the go version on the cluster could only improve its performance - I will try that another time.
+
 ## Implementation
 
 Both languages supports CSP so we will use channels to communicate between the threads/coroutines.
